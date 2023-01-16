@@ -43,9 +43,19 @@ class Comment(models.Model):
     created = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
 
+    def __str__(self):
+        return '"{}" to post "{}" by author "{}"'.format(self.text,
+                                                         self.post,
+                                                         self.author)
+
 
 class Follow(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='following')
+        User, on_delete=models.CASCADE, null=True,
+        blank=True, related_name='following')
     following = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='followers')
+        User, on_delete=models.CASCADE, null=True, 
+        blank=True, related_name='followers')
+
+    def __str__(self):
+        return '{} follows {}'.format(self.user, self.following)
