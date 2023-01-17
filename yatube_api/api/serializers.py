@@ -10,7 +10,7 @@ class PostSerializer(serializers.ModelSerializer):
     author = SlugRelatedField(slug_field='username', read_only=True)
 
     class Meta:
-        fields = '__all__'
+        fields = ('id', 'text', 'pub_date', 'author', 'group', 'image')
         model = Post
 
 
@@ -24,7 +24,7 @@ class GroupSerializer(serializers.ModelSerializer):
 class CustomUserSerializer(UserSerializer):
     class Meta:
         model = User
-        fields = '__all__'
+        fields = ('id',)
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -33,9 +33,9 @@ class CommentSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        fields = '__all__'
+        fields = ("id", "text", "author", "post", "created")
         model = Comment
-        read_only_fields = ['author', 'post']
+        read_only_fields = ('author', 'post')
 
 
 class FollowSerializer(serializers.ModelSerializer):
@@ -51,7 +51,7 @@ class FollowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Follow
-        fields = '__all__'
+        fields = ('user', 'following')
         validators = (
             UniqueTogetherValidator(
                 queryset=Follow.objects.all(),

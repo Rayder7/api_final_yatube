@@ -28,7 +28,11 @@ class Post(models.Model):
         related_name='posts', verbose_name='Сообщество',
         blank=True, null=True)
     image = models.ImageField(
-        upload_to='posts/', null=True, blank=True, default=None)
+        upload_to='posts/', blank=True, default=None)
+
+    class Meta:
+        verbose_name = 'Пост'
+        verbose_name_plural = 'Посты'
 
     def __str__(self):
         return self.text
@@ -43,19 +47,38 @@ class Comment(models.Model):
     created = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True)
 
+    class Meta:
+        ordering = ('-created',)
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'
+
     def __str__(self):
-        return '"{}" to post "{}" by author "{}"'.format(self.text,
-                                                         self.post,
-                                                         self.author)
+        return f'{self.text} to post {self.post} by author {self.author}'
 
 
 class Follow(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, null=True,
-        blank=True, related_name='following')
+        blank=True, related_name='following',
+        default=User)
     following = models.ForeignKey(
         User, on_delete=models.CASCADE, null=True,
-        blank=True, related_name='followers')
+        blank=True, related_name='followers',
+        default=User)
+
+    class Meta:
+        ordering = ('user',)
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+        constraints = (
+            models.UniqueConstraint(
+                fields=(
+                    "user",
+                    "following",
+                ),
+                name="unique_follow",
+            ),
+        )
 
     def __str__(self):
-        return '{} follows {}'.format(self.user, self.following)
+        return f'{self.user} follows {self.following}'
